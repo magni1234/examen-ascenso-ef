@@ -1888,3 +1888,292 @@ p {
         width: 100%;
     }
 }
+
+/* -------------------------------------------------------------
+   EXAM CARD PASTEL COLORS (Baby Colors)
+------------------------------------------------------------- */
+.exam-card-2022 {
+    background-color: #E0F2FE !important; /* Celeste bebé / Sky 100 */
+    border-color: #BAE6FD !important;
+}
+.exam-card-2022:hover {
+    border-color: #7dd3fc !important;
+    box-shadow: 0 10px 25px -5px rgba(186, 230, 253, 0.4), 0 8px 10px -6px rgba(186, 230, 253, 0.4) !important;
+}
+.exam-card-2022 .exam-card-meta {
+    border-top-color: #BAE6FD !important;
+}
+
+.exam-card-2023 {
+    background-color: #DCFCE7 !important; /* Verde bebé / Green 100 */
+    border-color: #BBF7D0 !important;
+}
+.exam-card-2023:hover {
+    border-color: #86efac !important;
+    box-shadow: 0 10px 25px -5px rgba(187, 247, 208, 0.4), 0 8px 10px -6px rgba(187, 247, 208, 0.4) !important;
+}
+.exam-card-2023 .exam-card-meta {
+    border-top-color: #BBF7D0 !important;
+}
+
+.exam-card-2025 {
+    background-color: #F3E8FF !important; /* Lila bebé / Purple 100 */
+    border-color: #E9D5FF !important;
+}
+.exam-card-2025:hover {
+    border-color: #d8b4fe !important;
+    box-shadow: 0 10px 25px -5px rgba(233, 213, 255, 0.4), 0 8px 10px -6px rgba(233, 213, 255, 0.4) !important;
+}
+.exam-card-2025 .exam-card-meta {
+    border-top-color: #E9D5FF !important;
+}
+
+/* -------------------------------------------------------------
+   DIAGNOSTIC COMPETENCIES SECTION
+------------------------------------------------------------- */
+.diagnostic-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 24px;
+}
+
+.diagnostic-title {
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.diagnostic-subtitle {
+    font-size: 0.9rem;
+    color: var(--slate-600);
+    margin-bottom: 16px;
+}
+
+.diagnostic-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 24px;
+}
+
+.diagnostic-column {
+    background-color: var(--bg-secondary);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.diagnostic-col-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--slate-200);
+}
+
+.diagnostic-col-title.strengths-header {
+    color: var(--primary);
+}
+
+.diagnostic-col-title.weaknesses-header {
+    color: #d97706; /* Amber 700 */
+}
+
+.diagnostic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    flex: 1;
+}
+
+.diagnostic-item {
+    background-color: var(--bg-primary);
+    border: 1px solid var(--slate-200);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    transition: var(--transition-smooth);
+}
+
+.diagnostic-item:hover {
+    transform: translateX(4px);
+    border-color: var(--slate-400);
+}
+
+.diagnostic-item-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.diagnostic-item-name {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--slate-800);
+}
+
+.diagnostic-item-badge {
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.diagnostic-item-badge.strength {
+    background-color: #d1fae5;
+    color: var(--primary);
+}
+
+.diagnostic-item-badge.weakness {
+    background-color: #fef3c7;
+    color: #d97706;
+}
+
+.diagnostic-progress-container {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.diagnostic-progress-bar {
+    flex: 1;
+    height: 8px;
+    background-color: var(--bg-accent);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.diagnostic-progress-fill {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.8s ease-out;
+}
+
+.diagnostic-progress-fill.strength {
+    background-color: var(--primary);
+}
+
+.diagnostic-progress-fill.weakness {
+    background-color: #f59e0b; /* Amber 500 */
+}
+
+.diagnostic-progress-percent {
+    font-size: 0.8rem;
+    font-weight: 700;
+    color: var(--slate-800);
+    width: 36px;
+    text-align: right;
+}
+
+.diagnostic-empty-state {
+    font-size: 0.9rem;
+    color: var(--slate-600);
+    font-style: italic;
+    text-align: center;
+    padding: 24px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background-color: var(--bg-primary);
+    border: 1px dashed var(--slate-200);
+    border-radius: var(--radius-md);
+    flex: 1;
+}
+
+@media (max-width: 768px) {
+    .diagnostic-container {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+}
+
+/* -------------------------------------------------------------
+   DIAGNOSTIC RECOMMENDATIONS CARD
+------------------------------------------------------------- */
+.diagnostic-recommendation-card {
+    background-color: var(--info-bg);
+    border: 1px solid var(--info-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    text-align: left;
+}
+
+.recommendation-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.recommendation-icon {
+    width: 38px;
+    height: 38px;
+    color: var(--info);
+    background-color: #eff6ff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px;
+    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.1);
+    flex-shrink: 0;
+}
+
+.recommendation-title {
+    display: block;
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--slate-800);
+}
+
+.recommendation-subtitle {
+    display: block;
+    font-size: 0.8rem;
+    color: var(--slate-600);
+}
+
+.recommendation-body {
+    font-size: 0.92rem;
+    color: var(--slate-800);
+    line-height: 1.6;
+}
+
+.recommendation-body p {
+    margin-bottom: 12px;
+}
+
+.recommendation-body ul {
+    list-style-type: none;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.recommendation-body li {
+    position: relative;
+    padding-left: 24px;
+    text-align: left;
+}
+
+.recommendation-body li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--info);
+    font-weight: 700;
+}

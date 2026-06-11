@@ -51,23 +51,179 @@ const state = {
 };
 
 // -------------------------------------------------------------
+// AUDIO ENGINE (Web Audio API Programmatic Synthesized Sounds)
+// -------------------------------------------------------------
+const playCorrectSound = () => {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const osc1 = ctx.createOscillator();
+        const gain1 = ctx.createGain();
+        osc1.connect(gain1);
+        gain1.connect(ctx.destination);
+        
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(523.25, ctx.currentTime); // C5
+        gain1.gain.setValueAtTime(0, ctx.currentTime);
+        gain1.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.05);
+        gain1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.25);
+        
+        osc1.start(ctx.currentTime);
+        osc1.stop(ctx.currentTime + 0.25);
+        
+        const osc2 = ctx.createOscillator();
+        const gain2 = ctx.createGain();
+        osc2.connect(gain2);
+        gain2.connect(ctx.destination);
+        
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(659.25, ctx.currentTime + 0.08); // E5
+        gain2.gain.setValueAtTime(0, ctx.currentTime + 0.08);
+        gain2.gain.linearRampToValueAtTime(0.25, ctx.currentTime + 0.13);
+        gain2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        
+        osc2.start(ctx.currentTime + 0.08);
+        osc2.stop(ctx.currentTime + 0.35);
+    } catch (e) {
+        console.error("Audio error:", e);
+    }
+};
+
+const playIncorrectSound = () => {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(140, ctx.currentTime);
+        osc.frequency.linearRampToValueAtTime(90, ctx.currentTime + 0.35);
+        
+        gain.gain.setValueAtTime(0, ctx.currentTime);
+        gain.gain.linearRampToValueAtTime(0.2, ctx.currentTime + 0.05);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+        
+        osc.start(ctx.currentTime);
+        osc.stop(ctx.currentTime + 0.35);
+    } catch (e) {
+        console.error("Audio error:", e);
+    }
+};
+
+const playCheerSound = () => {
+    try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const now = ctx.currentTime;
+        
+        const playNote = (freq, startTime, duration, type = 'triangle', volume = 0.15) => {
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            
+            osc.type = type;
+            osc.frequency.setValueAtTime(freq, startTime);
+            
+            gain.gain.setValueAtTime(0, startTime);
+            gain.gain.linearRampToValueAtTime(volume, startTime + 0.03);
+            gain.gain.exponentialRampToValueAtTime(0.001, startTime + duration);
+            
+            osc.start(startTime);
+            osc.stop(startTime + duration);
+        };
+        
+        // Happy arpeggio
+        playNote(392.00, now, 0.15);        // G4
+        playNote(523.25, now + 0.08, 0.15); // C5
+        playNote(659.25, now + 0.16, 0.15); // E5
+        playNote(783.99, now + 0.24, 0.4, 'sine', 0.18); // G5
+        playNote(1046.50, now + 0.32, 0.6, 'sine', 0.18); // C6
+        
+        // Cheering rising sweep ("Yeee!")
+        const sweepOsc = ctx.createOscillator();
+        const sweepGain = ctx.createGain();
+        sweepOsc.connect(sweepGain);
+        sweepGain.connect(ctx.destination);
+        
+        sweepOsc.type = 'triangle';
+        sweepOsc.frequency.setValueAtTime(320, now + 0.2);
+        sweepOsc.frequency.exponentialRampToValueAtTime(1100, now + 0.65);
+        
+        sweepGain.gain.setValueAtTime(0, now + 0.2);
+        sweepGain.gain.linearRampToValueAtTime(0.12, now + 0.25);
+        sweepGain.gain.exponentialRampToValueAtTime(0.001, now + 0.75);
+        
+        sweepOsc.start(now + 0.2);
+        sweepOsc.stop(now + 0.75);
+        
+        // Detuned oscillator for fullness
+        const sweepOsc2 = ctx.createOscillator();
+        const sweepGain2 = ctx.createGain();
+        sweepOsc2.connect(sweepGain2);
+        sweepGain2.connect(ctx.destination);
+        
+        sweepOsc2.type = 'sine';
+        sweepOsc2.frequency.setValueAtTime(330, now + 0.22);
+        sweepOsc2.frequency.exponentialRampToValueAtTime(1120, now + 0.63);
+        
+        sweepGain2.gain.setValueAtTime(0, now + 0.22);
+        sweepGain2.gain.linearRampToValueAtTime(0.10, now + 0.27);
+        sweepGain2.gain.exponentialRampToValueAtTime(0.001, now + 0.7);
+        
+        sweepOsc2.start(now + 0.22);
+        sweepOsc2.stop(now + 0.7);
+        
+        // Filtered noise for applause
+        const bufferSize = ctx.sampleRate * 0.9;
+        const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+        const data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) {
+            data[i] = Math.random() * 2 - 1;
+        }
+        
+        const noiseSource = ctx.createBufferSource();
+        noiseSource.buffer = buffer;
+        
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'bandpass';
+        filter.frequency.value = 950;
+        filter.Q.value = 1.2;
+        
+        const noiseGain = ctx.createGain();
+        noiseGain.gain.setValueAtTime(0, now + 0.15);
+        noiseGain.gain.linearRampToValueAtTime(0.05, now + 0.25);
+        noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+        
+        noiseSource.connect(filter);
+        filter.connect(noiseGain);
+        noiseGain.connect(ctx.destination);
+        
+        noiseSource.start(now + 0.15);
+        noiseSource.stop(now + 0.9);
+        
+    } catch (e) {
+        console.error("Audio error:", e);
+    }
+};
+
+// -------------------------------------------------------------
 // 2. GENERADOR DETERMINÍSTICO DE 150 USUARIOS
 // -------------------------------------------------------------
 const generate150Users = () => {
-    const firstNames = ['Carlos', 'Maria', 'Jose', 'Luis', 'Ana', 'Juan', 'Jorge', 'Rosa', 'Miguel', 'David', 'Pedro', 'Laura', 'Manuel', 'Elena', 'Francisco', 'Carmen', 'Javier', 'Sofia', 'Sandra', 'Roberto'];
-    const lastNames = ['Mendoza', 'Ramos', 'Garcia', 'Castro', 'Flores', 'Quispe', 'Rojas', 'Sanchez', 'Chavez', 'Diaz', 'Torres', 'Lopez', 'Gonzales', 'Perez', 'Rodriguez', 'Gutierrez', 'Ramirez', 'Cruz', 'Gomez', 'Vasquez'];
-    
     const users = [];
     const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     
     for (let i = 1; i <= 150; i++) {
-        // Deterministic picking logic matching the PL/pgSQL database seed
-        const fn = firstNames[i % 20];
-        const ln1 = lastNames[(i * 3) % 20];
-        const ln2 = lastNames[(i * 7) % 20];
-        const name = `${fn} ${ln1} ${ln2}`;
-        
-        // Formatear username como COD-YYY (ej. COD-001, COD-010, COD-150)
+        const name = 'Maestro de Educación Física';
         const username = `COD-${String(i).padStart(3, '0')}`;
         
         // Generar contraseña determinística (letras y números) sin desbordamiento
@@ -446,8 +602,13 @@ const renderDashboard = () => {
             buttonIcon = 'arrow-right';
         }
         
+        let yearClass = '';
+        if (exam.titulo.includes('2022')) yearClass = 'exam-card-2022';
+        else if (exam.titulo.includes('2023')) yearClass = 'exam-card-2023';
+        else if (exam.titulo.includes('2025')) yearClass = 'exam-card-2025';
+        
         const card = document.createElement('div');
-        card.className = `exam-card ${cardClass}`;
+        card.className = `exam-card ${cardClass} ${yearClass}`;
         card.innerHTML = `
             <div class="exam-card-header">
                 <span class="exam-badge ${badgeClass}">
@@ -497,6 +658,7 @@ const renderDashboard = () => {
 
 // Click en un Examen
 window.handleExamClick = (examId) => {
+    playCheerSound();
     const exam = state.simulacros.find(e => e.id === examId);
     if (!exam) return;
     
@@ -716,6 +878,13 @@ const evaluateAnswer = () => {
     // Guardar progreso temporal inmediatamente
     savePausedProgress();
     
+    // Play sound effects
+    if (isCorrect) {
+        playCorrectSound();
+    } else {
+        playIncorrectSound();
+    }
+    
     // Update UI Score
     document.getElementById('player-current-score').innerText = state.currentScore.toFixed(2);
     
@@ -818,15 +987,30 @@ const submitFinishedExam = async () => {
     state.activeExam = null;
     state.activeQuestions = [];
     
+    // Ensure attempt is defined for showExamResults
+    const finalAttempt = attempt || {
+        docente_id: state.currentUser ? state.currentUser.id : 0,
+        simulacro_id: parseInt(examId),
+        puntaje_obtenido: parseFloat(finalScore),
+        respuestas_usuario: state.userAnswers || {},
+        completado_at: new Date().toISOString()
+    };
+    
     // Show results screen
-    showExamResults(finishedExam, attempt);
+    showExamResults(finishedExam, finalAttempt);
 };
 
 // Ver Resultados del Examen
 const showExamResults = (exam, attempt) => {
     document.getElementById('results-exam-title').innerText = exam.titulo;
     
-    const score = parseFloat(attempt.puntaje_obtenido);
+    // Fallback if attempt is undefined/null
+    const safeAttempt = attempt || {
+        puntaje_obtenido: 0.0,
+        respuestas_usuario: {}
+    };
+    
+    const score = parseFloat(safeAttempt.puntaje_obtenido || 0.0);
     const examQuestions = state.preguntas[exam.id] || [];
     const maxScore = examQuestions.length * 2.0;
     
@@ -837,7 +1021,7 @@ const showExamResults = (exam, attempt) => {
     let correctCount = 0;
     let incorrectCount = 0;
     
-    const userAnswers = attempt.respuestas_usuario || {};
+    const userAnswers = safeAttempt.respuestas_usuario || {};
     
     examQuestions.forEach(q => {
         const ans = userAnswers[q.numero];
@@ -877,6 +1061,161 @@ const showExamResults = (exam, attempt) => {
         badge.querySelector('i').setAttribute('data-lucide', 'alert-circle');
     }
     
+    // -------------------------------------------------------------
+    // DIAGNOSTIC COMPETENCIES ANALYSIS
+    // -------------------------------------------------------------
+    const topics = {};
+    
+    examQuestions.forEach(q => {
+        let topic = 'Enfoque de Educación Física';
+        if (q.retroalimentacion) {
+            const match = q.retroalimentacion.match(/Justificación:\s*([^.]+)/);
+            if (match && match[1]) {
+                topic = match[1].trim();
+            }
+        }
+        
+        if (!topics[topic]) {
+            topics[topic] = {
+                total: 0,
+                correct: 0
+            };
+        }
+        
+        topics[topic].total++;
+        
+        const ans = userAnswers[q.numero];
+        if (ans === q.respuesta_correcta) {
+            topics[topic].correct++;
+        }
+    });
+
+    const strengthsList = document.getElementById('diagnostic-strengths-list');
+    const weaknessesList = document.getElementById('diagnostic-weaknesses-list');
+    
+    if (strengthsList && weaknessesList) {
+        strengthsList.innerHTML = '';
+        weaknessesList.innerHTML = '';
+        
+        let hasStrengths = false;
+        let hasWeaknesses = false;
+        
+        for (const [topicName, data] of Object.entries(topics)) {
+            const percent = data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0;
+            const isStrength = percent >= 75;
+            
+            const itemHtml = `
+                <div class="diagnostic-item">
+                    <div class="diagnostic-item-header">
+                        <span class="diagnostic-item-name">${topicName}</span>
+                        <span class="diagnostic-item-badge ${isStrength ? 'strength' : 'weakness'}">
+                            ${data.correct}/${data.total} aciertos
+                        </span>
+                    </div>
+                    <div class="diagnostic-progress-container">
+                        <div class="diagnostic-progress-bar">
+                            <div class="diagnostic-progress-fill ${isStrength ? 'strength' : 'weakness'}" style="width: ${percent}%"></div>
+                        </div>
+                        <span class="diagnostic-progress-percent">${percent}%</span>
+                    </div>
+                </div>
+            `;
+            
+            if (isStrength) {
+                strengthsList.innerHTML += itemHtml;
+                hasStrengths = true;
+            } else {
+                weaknessesList.innerHTML += itemHtml;
+                hasWeaknesses = true;
+            }
+        }
+        
+        if (!hasStrengths) {
+            strengthsList.innerHTML = `
+                <div class="diagnostic-empty-state">
+                    <i data-lucide="info" style="width: 24px; height: 24px; color: var(--slate-400);"></i>
+                    <span>No se identificaron fortalezas destacadas en este intento. ¡Sigue preparándote!</span>
+                </div>
+            `;
+        }
+        
+        if (!hasWeaknesses) {
+            weaknessesList.innerHTML = `
+                <div class="diagnostic-empty-state">
+                    <i data-lucide="smile" style="width: 24px; height: 24px; color: var(--primary);"></i>
+                    <span>¡Felicidades! No presentas puntos débiles significativos en esta prueba.</span>
+                </div>
+            `;
+        }
+    }
+
+    // Generate Personalized Recommendations
+    const recommendationText = document.getElementById('diagnostic-recommendation-text');
+    if (recommendationText) {
+        let recHtml = '';
+        
+        // Find weaknesses (accuracy < 75%)
+        const weakTopics = [];
+        for (const [topicName, data] of Object.entries(topics)) {
+            const percent = data.total > 0 ? Math.round((data.correct / data.total) * 100) : 0;
+            if (percent < 75) {
+                weakTopics.push(topicName);
+            }
+        }
+        
+        // Topic recommendation dictionary
+        const topicRecs = {
+            'Metacognición y Autonomía': 'Refuerza las técnicas de metacognición: diseña preguntas reflexivas que guíen al alumno a evaluar sus movimientos sin que el docente les dé la respuesta directamente.',
+            'Juegos Predeportivos': 'Estudia la didáctica de los juegos predeportivos: cómo adaptar reglas en fútsal, vóleibol y balonmano escolar para priorizar el desarrollo motor lúdico ante la técnica formal.',
+            'Expresión Corporal': 'Repasa dinámicas de expresión corporal: el uso del cuerpo como herramienta de comunicación de sensaciones, ritmos y representaciones dramáticas.',
+            'Control Postural y Tónico': 'Familiarízate con el ajuste postural y control tónico: cómo diseñar desafíos motrices de equilibrio estático y dinámico considerando la gravedad y tensión muscular.',
+            'Juego Cooperativo': 'Estudia juegos cooperativos: técnicas para eliminar la rivalidad y fomentar dinámicas donde la meta solo se alcance colaborando en equipo de forma solidaria.',
+            'Orientación Espacial': 'Repasa la noción de orientación espacial: ejercicios prácticos de estructuración espacial (arriba/abajo, adentro/afuera, distancias y trayectorias).',
+            'Estilos de Enseñanza - Asignación de Tareas': 'Diferencia claramente los estilos de Mosston: la transición entre el Mando Directo tradicional, la Asignación de Tareas y el Descubrimiento Guiado reflexivo.',
+            'Resolución de Conflictos': 'Repasa la mediación pedagógica: técnicas de diálogo asertivo y preguntas reflexivas que lleven a los alumnos a proponer soluciones pacíficas tras un incidente.',
+            'Tácticas Deportivas': 'Estudia el pensamiento táctico: cómo resolver problemas situacionales de espacio, tiempo, ataque y defensa en juegos modificados con oposición.',
+            'Primeros Auxilios (Epistaxis y Contusiones)': 'Memoriza el protocolo de epistaxis (inclinar cabeza adelante, presionar fosas nasales) y contusiones (frío directo local en zona afectada, nunca calor ni masajes).',
+            'Estructuras Perceptivas': 'Repasa los planos anatómicos (sagital, frontal, transversal) y cómo interactúan con los ejes de movimiento durante la práctica deportiva.',
+            'Sincinesias y Maduración': 'Estudia sincinesias: comprende que los movimientos parásitos involuntarios son normales en la maduración psicomotriz infantil hasta los 12 años.',
+            'Enfoque Inclusivo y DUA': 'Domina el Diseño Universal para el Aprendizaje: cómo diversificar los canales de presentación, expresión y compromiso para asegurar la inclusión de alumnos con NEE.'
+        };
+        
+        if (accuracy >= 90) {
+            recHtml += `<p><strong>¡Excelente rendimiento! (Nivel Logrado Destacado)</strong>. Felicitaciones, tienes un dominio sobresaliente del currículo oficial de Educación Física. Tu preparación va por muy buen camino.</p>`;
+            if (weakTopics.length > 0) {
+                recHtml += `<p>Para asegurar tu puntaje máximo en la evaluación oficial de ascenso, te sugerimos repasar estos puntos específicos:</p><ul>`;
+                weakTopics.forEach(t => {
+                    const rec = topicRecs[t] || `Repasa a detalle los casos prácticos sobre el tema pedagógico "${t}".`;
+                    recHtml += `<li><strong>${t}</strong>: ${rec}</li>`;
+                });
+                recHtml += `</ul>`;
+            } else {
+                recHtml += `<p>¡Has contestado todos los temas a la perfección! Continúa rindiendo simulacros controlados por tiempo para consolidar tu velocidad y agilidad de análisis ante los casos complejos del MINEDU.</p>`;
+            }
+        } else if (accuracy >= 70) {
+            recHtml += `<p><strong>¡Buen nivel logrado!</strong>. Tienes bases curriculares sólidas, pero aún quedan pequeños vacíos conceptuales que podrían restarte puntos en el examen oficial de ascenso.</p>`;
+            recHtml += `<p>Te recomendamos priorizar el estudio de las siguientes áreas pedagógicas identificadas en esta prueba:</p><ul>`;
+            weakTopics.forEach(t => {
+                const rec = topicRecs[t] || `Refuerza los criterios curriculares del MINEDU referentes a "${t}".`;
+                recHtml += `<li><strong>${t}</strong>: ${rec}</li>`;
+            });
+            recHtml += `</ul>`;
+        } else {
+            recHtml += `<p><strong>Rendimiento en proceso de consolidación</strong>. Se identifican dificultades para aplicar el enfoque formativo y los procesos del Currículo Nacional en situaciones prácticas de Educación Física.</p>`;
+            recHtml += `<p><strong>Tu plan de acción inmediato:</strong></p><ul>`;
+            weakTopics.forEach(t => {
+                const rec = topicRecs[t] || `Estudia detenidamente la teoría y los casos resueltos asociados a "${t}".`;
+                recHtml += `<li><strong>${t}</strong>: ${rec}</li>`;
+            });
+            if (weakTopics.length === 0) {
+                recHtml += `<li>Realiza lecturas minuciosas de las orientaciones para la evaluación formativa del MINEDU y contrasta tus respuestas con las justificaciones teóricas del curso.</li>`;
+            }
+            recHtml += `</ul>`;
+        }
+        
+        recommendationText.innerHTML = recHtml;
+    }
+
     // Render Review questions
     const reviewList = document.getElementById('results-review-list');
     reviewList.innerHTML = '';
@@ -956,6 +1295,27 @@ const confirmExitAttempt = async () => {
     // Volver al panel de control
     renderDashboard();
     showView('view-dashboard');
+};
+
+// Lógica de Finalización Anticipada
+const handleFinishExamEarly = () => {
+    const scoreSpan = document.getElementById('modal-finish-current-score');
+    if (scoreSpan) scoreSpan.innerText = state.currentScore.toFixed(2);
+    
+    const modal = document.getElementById('modal-finish-warning');
+    if (modal) modal.classList.remove('hidden');
+};
+
+const cancelFinishExamEarly = () => {
+    const modal = document.getElementById('modal-finish-warning');
+    if (modal) modal.classList.add('hidden');
+};
+
+const confirmFinishExamEarly = async () => {
+    const modal = document.getElementById('modal-finish-warning');
+    if (modal) modal.classList.add('hidden');
+    
+    await submitFinishedExam();
 };
 
 
@@ -1059,11 +1419,17 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('btn-submit-answer').addEventListener('click', evaluateAnswer);
     document.getElementById('btn-next-question').addEventListener('click', handleNextQuestion);
     document.getElementById('btn-exit-exam').addEventListener('click', handleExitAttempt);
+    document.getElementById('btn-finish-exam-early').addEventListener('click', handleFinishExamEarly);
     
     // Exit modal triggers
     document.getElementById('btn-exit-cancel').addEventListener('click', cancelExitAttempt);
     document.getElementById('btn-close-exit-warning').addEventListener('click', cancelExitAttempt);
     document.getElementById('btn-exit-confirm').addEventListener('click', confirmExitAttempt);
+    
+    // Finish modal triggers
+    document.getElementById('btn-close-finish-warning').addEventListener('click', cancelFinishExamEarly);
+    document.getElementById('btn-finish-cancel').addEventListener('click', cancelFinishExamEarly);
+    document.getElementById('btn-finish-confirm').addEventListener('click', confirmFinishExamEarly);
     
     // 4. Bind Results page actions
     document.getElementById('btn-results-back').addEventListener('click', () => {

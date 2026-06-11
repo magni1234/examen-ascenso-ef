@@ -36,7 +36,7 @@
                 <div class="user-profile">
                     <div class="profile-info">
                         <span id="user-display-name" class="profile-name">Docente</span>
-                        <span class="profile-role">Especialista EF</span>
+                        <span class="profile-role">Educación Física</span>
                     </div>
                     <div class="profile-avatar">
                         <i data-lucide="user"></i>
@@ -178,9 +178,14 @@
                     
                     <!-- Player Header -->
                     <div class="player-header">
-                        <button id="btn-exit-exam" class="btn btn-outline btn-sm">
-                            <i data-lucide="arrow-left"></i> Salir del examen
-                        </button>
+                        <div class="player-header-actions" style="display: flex; gap: 8px;">
+                            <button id="btn-exit-exam" class="btn btn-outline btn-sm">
+                                <i data-lucide="arrow-left"></i> Salir (Pausa)
+                            </button>
+                            <button id="btn-finish-exam-early" class="btn btn-danger btn-sm">
+                                <i data-lucide="check-square"></i> Finalizar Examen
+                            </button>
+                        </div>
                         <div class="exam-identity">
                             <span id="player-exam-title" class="player-title">Examen de Ascenso 2025</span>
                             <span class="player-subtitle">Especialidad: Educación Física</span>
@@ -306,6 +311,42 @@
                         </div>
                     </div>
 
+                    <!-- Diagnostic Dashboard (Strengths & Weaknesses) -->
+                    <div class="diagnostic-section">
+                        <h3 class="diagnostic-title"><i data-lucide="bar-chart-3"></i> Diagnóstico de Competencias</h3>
+                        <p class="diagnostic-subtitle">Análisis detallado de tus fortalezas y oportunidades de mejora pedagógica en Educación Física.</p>
+                        
+                        <div class="diagnostic-container">
+                            <div class="diagnostic-column">
+                                <h4 class="diagnostic-col-title strengths-header"><i data-lucide="trending-up"></i> Tus Fortalezas</h4>
+                                <div id="diagnostic-strengths-list" class="diagnostic-list">
+                                    <!-- Strengths will be rendered here -->
+                                </div>
+                            </div>
+                            
+                            <div class="diagnostic-column">
+                                <h4 class="diagnostic-col-title weaknesses-header"><i data-lucide="trending-down"></i> Oportunidades de Mejora</h4>
+                                <div id="diagnostic-weaknesses-list" class="diagnostic-list">
+                                    <!-- Weaknesses will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendation Card -->
+                        <div class="diagnostic-recommendation-card" id="diagnostic-recommendation-panel" style="margin-top: 24px;">
+                            <div class="recommendation-header">
+                                <i data-lucide="lightbulb" class="recommendation-icon"></i>
+                                <div>
+                                    <span class="recommendation-title">Recomendaciones Personalizadas para tu Examen</span>
+                                    <span class="recommendation-subtitle">Plan de estudio a medida según tus respuestas obtenidas en esta evaluación.</span>
+                                </div>
+                            </div>
+                            <div class="recommendation-body" id="diagnostic-recommendation-text">
+                                <!-- Recommendations will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Question Review Section -->
                     <div class="review-section">
                         <h3 class="review-section-title"><i data-lucide="search-code"></i> Revisión de Preguntas e Intentos</h3>
@@ -386,6 +427,28 @@
                 <div class="modal-actions">
                     <button type="button" id="btn-exit-cancel" class="btn btn-outline">Continuar Examen</button>
                     <button type="button" id="btn-exit-confirm" class="btn btn-warning">Sí, Pausar y Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINISH EXAM WARNING MODAL -->
+    <div id="modal-finish-warning" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-card warning-border" style="border-top-color: var(--error);">
+            <div class="modal-header">
+                <h3 style="color: var(--error);"><i data-lucide="alert-triangle"></i> Finalizar y Enviar Examen</h3>
+                <button id="btn-close-finish-warning" class="btn-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">
+                    ¿Estás seguro de que deseas finalizar tu examen ahora? Se registrará tu puntaje obtenido hasta el momento (<strong id="modal-finish-current-score">0.00</strong> puntos) y no podrás volver a realizar este examen.
+                </p>
+                <p class="modal-highlight">Esta acción es irreversible y consumirá tu único intento disponible.</p>
+                
+                <div class="modal-actions">
+                    <button type="button" id="btn-finish-cancel" class="btn btn-outline">Continuar Examen</button>
+                    <button type="button" id="btn-finish-confirm" class="btn btn-danger">Sí, Finalizar y Enviar</button>
                 </div>
             </div>
         </div>
