@@ -134,7 +134,7 @@ const updateConnectionIndicator = () => {
 
 // Autenticación de Usuario
 const apiLogin = async (username, password) => {
-    username = username.trim().toLowerCase();
+    username = username.trim().toUpperCase();
     password = password.trim();
     
     if (state.isLocalDemo) {
