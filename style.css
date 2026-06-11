@@ -7,31 +7,35 @@
     --bg-secondary: #ffffff;      /* Pure white for cards */
     --bg-accent: #ECEAF4;         /* Soft lila/whitesmoke accent */
     
-    --primary: #059669;           /* Emerald 600 - Health, Phys Ed, Sports */
-    --primary-hover: #047857;     /* Emerald 700 */
-    --primary-light: #d1fae5;     /* Emerald 100 */
-    --primary-glow: rgba(5, 150, 105, 0.15);
+    --primary: #4ECA9E;           /* Premium Pastel Emerald/Mint */
+    --primary-hover: #3CB288;     /* Soft Mint Hover */
+    --primary-light: #EEFAF5;     /* Baby Mint Background */
+    --primary-glow: rgba(78, 202, 158, 0.15);
     
     --slate-800: #1e293b;         /* Slate 800 - Deep text */
     --slate-600: #475569;         /* Slate 600 - Secondary text */
     --slate-400: #94a3b8;         /* Slate 400 - Borders & Muted placeholders */
     --slate-200: #e2e8f0;         /* Slate 200 - Divider borders */
     
-    --success: #10b981;           /* Emerald 500 - Correct answer */
-    --success-bg: #ecfdf5;        /* Emerald 50 - Success block */
-    --success-border: #a7f3d0;
+    --success: #4ECA9E;           /* Premium Pastel Success Green */
+    --success-bg: #EEFAF5;        /* Baby Mint */
+    --success-border: #C1F2E1;
+    --success-text: #1E6B54;      /* Soft Dark Success Text */
     
-    --error: #ef4444;             /* Red 500 - Incorrect answer */
-    --error-bg: #fef2f2;          /* Red 50 - Error block */
-    --error-border: #fca5a5;
+    --error: #FF8A8A;             /* Premium Pastel Coral/Red */
+    --error-bg: #FFF5F5;          /* Baby Red */
+    --error-border: #FFD1D1;
+    --error-text: #A73A3A;        /* Soft Dark Error Text */
     
-    --warning: #f59e0b;           /* Amber 500 */
-    --warning-bg: #fffbeb;        /* Amber 50 */
-    --warning-border: #fde68a;
+    --warning: #FFD066;           /* Premium Pastel Amber */
+    --warning-bg: #FFFDF0;        /* Baby Amber */
+    --warning-border: #FFE9B3;
+    --warning-text: #A77D1C;      /* Soft Dark Warning Text */
     
-    --info: #3b82f6;              /* Blue 500 */
-    --info-bg: #eff6ff;           /* Blue 50 */
-    --info-border: #bfdbfe;
+    --info: #70B5FF;              /* Premium Pastel Blue */
+    --info-bg: #F0F7FF;           /* Baby Blue */
+    --info-border: #D1E6FF;
+    --info-text: #2B6CB0;         /* Soft Dark Info Text */
 
     /* Typographical scales */
     --font-primary: 'Outfit', sans-serif;
@@ -114,13 +118,13 @@ p {
 .btn-primary {
     background-color: var(--primary);
     color: var(--bg-secondary);
-    box-shadow: 0 4px 12px rgba(5, 150, 105, 0.2);
+    box-shadow: 0 4px 12px rgba(78, 202, 158, 0.2);
 }
 
 .btn-primary:hover:not(:disabled) {
     background-color: var(--primary-hover);
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(5, 150, 105, 0.3);
+    box-shadow: 0 6px 16px rgba(78, 202, 158, 0.3);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -148,24 +152,26 @@ p {
 .btn-danger {
     background-color: var(--error);
     color: var(--bg-secondary);
-    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.2);
+    box-shadow: 0 4px 12px rgba(255, 138, 138, 0.15);
 }
 
 .btn-danger:hover {
-    background-color: #dc2626;
+    background-color: var(--error);
+    opacity: 0.9;
     transform: translateY(-2px);
 }
 
 .btn-warning {
     background-color: var(--warning);
     color: var(--bg-secondary);
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2);
+    box-shadow: 0 4px 12px rgba(255, 208, 102, 0.15);
 }
 
 .btn-warning:hover {
-    background-color: #d97706;
+    background-color: var(--warning);
+    opacity: 0.9;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.3);
+    box-shadow: 0 6px 16px rgba(255, 208, 102, 0.25);
 }
 
 .btn-sm {
@@ -217,19 +223,19 @@ p {
 
 .alert-box.error {
     background-color: var(--error-bg);
-    color: #b91c1c;
+    color: var(--error-text);
     border: 1px solid var(--error-border);
 }
 
 .alert-box.info {
     background-color: var(--info-bg);
-    color: #1d4ed8;
+    color: var(--info-text);
     border: 1px solid var(--info-border);
 }
 
 .alert-box.success {
     background-color: var(--success-bg);
-    color: #047857;
+    color: var(--success-text);
     border: 1px solid var(--success-border);
 }
 
@@ -790,12 +796,12 @@ p {
 }
 
 .stat-icon-wrapper.success {
-    background-color: #d1fae5;
+    background-color: var(--success-bg);
     color: var(--success);
 }
 
 .stat-icon-wrapper.warning {
-    background-color: #fef3c7;
+    background-color: var(--warning-bg);
     color: var(--warning);
 }
 
@@ -1030,9 +1036,9 @@ p {
 }
 
 .player-timer-badge {
-    background-color: #eff6ff;
-    border: 1px solid #bfdbfe;
-    color: #1e40af;
+    background-color: var(--info-bg);
+    border: 1px solid var(--info-border);
+    color: var(--info-text);
     padding: 8px 16px;
     border-radius: var(--radius-md);
     font-size: 0.9rem;
@@ -1045,13 +1051,13 @@ p {
 .player-timer-badge i {
     width: 18px;
     height: 18px;
-    color: #3b82f6;
+    color: var(--info);
 }
 
 .player-score-badge {
     background-color: var(--warning-bg);
     border: 1px solid var(--warning-border);
-    color: #b45309;
+    color: var(--warning-text);
     padding: 8px 16px;
     border-radius: var(--radius-md);
     font-size: 0.9rem;
@@ -1064,7 +1070,7 @@ p {
 .player-score-badge i {
     width: 18px;
     height: 18px;
-    fill: #f59e0b;
+    fill: var(--warning);
 }
 
 .player-progress-section {
@@ -1410,12 +1416,30 @@ p {
     align-items: center;
     gap: 8px;
     background-color: var(--info-bg);
-    color: #1d4ed8;
+    color: var(--info-text);
     border: 1px solid var(--info-border);
     padding: 6px 14px;
     border-radius: 20px;
     font-size: 0.85rem;
     font-weight: 700;
+}
+
+.achievement-badge.success {
+    background-color: var(--success-bg);
+    color: var(--success-text);
+    border-color: var(--success-border);
+}
+
+.achievement-badge.info {
+    background-color: var(--info-bg);
+    color: var(--info-text);
+    border-color: var(--info-border);
+}
+
+.achievement-badge.error {
+    background-color: var(--error-bg);
+    color: var(--error-text);
+    border-color: var(--error-border);
 }
 
 .achievement-badge i {
@@ -2029,13 +2053,13 @@ p {
 }
 
 .diagnostic-item-badge.strength {
-    background-color: #d1fae5;
-    color: var(--primary);
+    background-color: var(--success-bg);
+    color: var(--success-text);
 }
 
 .diagnostic-item-badge.weakness {
-    background-color: #fef3c7;
-    color: #d97706;
+    background-color: var(--warning-bg);
+    color: var(--warning-text);
 }
 
 .diagnostic-progress-container {
@@ -2059,11 +2083,11 @@ p {
 }
 
 .diagnostic-progress-fill.strength {
-    background-color: var(--primary);
+    background-color: var(--success);
 }
 
 .diagnostic-progress-fill.weakness {
-    background-color: #f59e0b; /* Amber 500 */
+    background-color: var(--warning);
 }
 
 .diagnostic-progress-percent {
@@ -2123,13 +2147,13 @@ p {
     width: 38px;
     height: 38px;
     color: var(--info);
-    background-color: #eff6ff;
+    background-color: var(--info-bg);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 8px;
-    box-shadow: 0 4px 10px rgba(59, 130, 246, 0.1);
+    box-shadow: 0 4px 10px rgba(112, 181, 255, 0.15);
     flex-shrink: 0;
 }
 

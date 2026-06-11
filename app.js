@@ -421,7 +421,7 @@ const apiSaveAttempt = async (examId, score, answers) => {
     }
     
     // Prevent duplicated attempts
-    const exists = localAttempts.some(att => att.simulacro_id === parseInt(examId));
+    const exists = localAttempts.some(att => parseInt(att.simulacro_id) === parseInt(examId));
     if (exists) {
         return { data: null, error: "Ya has completado tu único intento para este examen." };
     }
@@ -566,9 +566,9 @@ const renderDashboard = () => {
     
     state.simulacros.forEach(exam => {
         // Check if there is a completed attempt
-        const attempt = state.intentos.find(att => att.simulacro_id === exam.id);
+        const attempt = state.intentos.find(att => parseInt(att.simulacro_id) === parseInt(exam.id));
         const isCompleted = !!attempt;
-        const examQuestions = state.preguntas[exam.id] || [];
+        const examQuestions = state.preguntas[exam.id] || state.preguntas[String(exam.id)] || state.preguntas[Number(exam.id)] || [];
         const maxScore = examQuestions.length * 2.0;
         
         if (isCompleted) {
@@ -662,7 +662,7 @@ window.handleExamClick = (examId) => {
     const exam = state.simulacros.find(e => e.id === examId);
     if (!exam) return;
     
-    const attempt = state.intentos.find(att => att.simulacro_id === examId);
+    const attempt = state.intentos.find(att => parseInt(att.simulacro_id) === parseInt(examId));
     if (attempt) {
         // User already took it, show results immediately
         showExamResults(exam, attempt);
@@ -718,7 +718,7 @@ const stopCountdownTimer = () => {
 // Iniciar Examen
 const startExam = (exam) => {
     state.activeExam = exam;
-    state.activeQuestions = state.preguntas[exam.id] || [];
+    state.activeQuestions = state.preguntas[exam.id] || state.preguntas[String(exam.id)] || state.preguntas[Number(exam.id)] || [];
     
     // Verificar si hay progreso pausado
     const progressKey = `progreso_${state.currentUser.username}_${exam.id}`;
@@ -1011,11 +1011,14 @@ const showExamResults = (exam, attempt) => {
     };
     
     const score = parseFloat(safeAttempt.puntaje_obtenido || 0.0);
-    const examQuestions = state.preguntas[exam.id] || [];
+    const examQuestions = state.preguntas[exam.id] || state.preguntas[String(exam.id)] || state.preguntas[Number(exam.id)] || [];
     const maxScore = examQuestions.length * 2.0;
     
     document.getElementById('results-score-value').innerText = score.toFixed(2);
-    document.getElementById('results-score-value').nextElementSibling.nextElementSibling.innerText = `Máximo: ${maxScore.toFixed(2)} pts`;
+    const scoreMaxEl = document.querySelector('.score-max');
+    if (scoreMaxEl) {
+        scoreMaxEl.innerText = `Máximo: ${maxScore.toFixed(2)} pts`;
+    }
     
     // Evaluate correctness counts
     let correctCount = 0;
@@ -1040,26 +1043,31 @@ const showExamResults = (exam, attempt) => {
     
     // Achievement badges logic (based on Peruvian score metrics)
     const badge = document.getElementById('results-achievement-badge');
-    const badgeText = document.getElementById('results-achievement-text');
-    badge.className = 'achievement-badge'; // Reset
+    
+    // Clean and set achievement badge HTML (safe against Lucide replacing <i> with <svg>)
+    let iconName = 'alert-circle';
+    let badgeClass = 'error';
+    let text = 'Nivel de Inicio';
     
     if (accuracy >= 90) {
-        badge.classList.add('success');
-        badgeText.innerText = 'Logro Destacado';
-        badge.querySelector('i').setAttribute('data-lucide', 'award');
+        badgeClass = 'success';
+        text = 'Logro Destacado';
+        iconName = 'award';
     } else if (accuracy >= 70) {
-        badge.classList.add('success');
-        badgeText.innerText = 'Nivel Logrado';
-        badge.querySelector('i').setAttribute('data-lucide', 'check-circle');
+        badgeClass = 'success';
+        text = 'Nivel Logrado';
+        iconName = 'check-circle';
     } else if (accuracy >= 50) {
-        badge.classList.add('info');
-        badgeText.innerText = 'En Proceso';
-        badge.querySelector('i').setAttribute('data-lucide', 'help-circle');
-    } else {
-        badge.classList.add('error');
-        badgeText.innerText = 'Nivel de Inicio';
-        badge.querySelector('i').setAttribute('data-lucide', 'alert-circle');
+        badgeClass = 'info';
+        text = 'En Proceso';
+        iconName = 'help-circle';
     }
+    
+    badge.className = `achievement-badge ${badgeClass}`;
+    badge.innerHTML = `
+        <i data-lucide="${iconName}"></i>
+        <span id="results-achievement-text">${text}</span>
+    `;
     
     // -------------------------------------------------------------
     // DIAGNOSTIC COMPETENCIES ANALYSIS
@@ -1068,7 +1076,7 @@ const showExamResults = (exam, attempt) => {
     
     examQuestions.forEach(q => {
         let topic = 'Enfoque de Educación Física';
-        if (q.retroalimentacion) {
+        if (q.retroalimentacion && typeof q.retroalimentacion === 'string') {
             const match = q.retroalimentacion.match(/Justificación:\s*([^.]+)/);
             if (match && match[1]) {
                 topic = match[1].trim();
@@ -1382,14 +1390,14 @@ const handleClearConfig = () => {
 // Toggle Password Visibility
 const togglePasswordVisibility = () => {
     const passwordInput = document.getElementById('login-password');
-    const buttonIcon = document.getElementById('btn-toggle-password').querySelector('i');
+    const btn = document.getElementById('btn-toggle-password');
     
     if (passwordInput.type === 'password') {
         passwordInput.type = 'text';
-        buttonIcon.setAttribute('data-lucide', 'eye-off');
+        btn.innerHTML = `<i data-lucide="eye-off"></i>`;
     } else {
         passwordInput.type = 'password';
-        buttonIcon.setAttribute('data-lucide', 'eye');
+        btn.innerHTML = `<i data-lucide="eye"></i>`;
     }
     lucide.createIcons();
 };
