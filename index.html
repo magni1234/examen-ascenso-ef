@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ascenso Docente 2026 - Educación Física</title>
+    <!-- Google Fonts: Outfit (Premium & readable) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Supabase JS Client SDK -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Custom Styleheet -->
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- App Wrapper -->
+    <div id="app" class="app-container">
+
+        <!-- Top Navigation / Header -->
+        <header id="app-header" class="main-header hidden">
+            <div class="header-content">
+                <div class="brand">
+                    <div class="brand-icon">
+                        <i data-lucide="dumbbell"></i>
+                    </div>
+                    <div>
+                        <span class="brand-title">Ascenso 2026</span>
+                        <span class="brand-subtitle">Educación Física</span>
+                    </div>
+                </div>
+                
+                <div class="user-profile">
+                    <div class="profile-info">
+                        <span id="user-display-name" class="profile-name">Docente</span>
+                        <span class="profile-role">Educación Física</span>
+                    </div>
+                    <div class="profile-avatar">
+                        <i data-lucide="user"></i>
+                    </div>
+                    <button id="btn-logout" class="btn-icon" title="Cerrar Sesión">
+                        <i data-lucide="log-out"></i>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+
+            <!-- 1. VIEW: LOGIN -->
+            <section id="view-login" class="view">
+                <div class="login-wrapper">
+                    <div class="login-card">
+                        <div class="login-logo">
+                            <div class="logo-circle">
+                                <i data-lucide="award"></i>
+                            </div>
+                        </div>
+                        
+                        <h1 class="login-title">Ascenso Docente 2026</h1>
+                        <p class="login-subtitle">Acceso exclusivo para docentes de Educación Física</p>
+
+                        <div id="login-error" class="alert-box error hidden">
+                            <i data-lucide="alert-circle"></i>
+                            <span id="login-error-text">Credenciales incorrectas</span>
+                        </div>
+
+                        <form id="login-form" class="login-form">
+                            <div class="form-group">
+                                <label for="login-username">Código de Acceso (COD-XXX)</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="hash" class="input-icon"></i>
+                                    <input type="text" id="login-username" placeholder="COD-001" required autocomplete="username">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="login-password">Contraseña</label>
+                                <div class="input-wrapper">
+                                    <i data-lucide="lock" class="input-icon"></i>
+                                    <input type="password" id="login-password" placeholder="Contraseña de acceso" required autocomplete="current-password">
+                                    <button type="button" id="btn-toggle-password" class="btn-toggle-password">
+                                        <i data-lucide="eye"></i>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-block">
+                                <span class="btn-text">Ingresar a la Plataforma</span>
+                                <i data-lucide="chevron-right"></i>
+                            </button>
+                        </form>
+
+                    </div>
+                    
+                    <!-- Config Connection Button -->
+                    <button id="btn-open-config" class="btn-config-trigger">
+                        <i data-lucide="database"></i> Configurar Supabase
+                    </button>
+                </div>
+            </section>
+
+            <!-- 2. VIEW: DASHBOARD -->
+            <section id="view-dashboard" class="view hidden">
+                <div class="dashboard-container">
+                    
+                    <!-- Welcome and Quote -->
+                    <div class="welcome-banner">
+                        <div class="welcome-text">
+                            <h2 class="welcome-title">¡Hola, <span id="dashboard-user-name">Docente</span>!</h2>
+                            <p class="welcome-desc">Bienvenido a tu panel de preparación. Tu meta es el ascenso de escala magisterial.</p>
+                            <div class="quote-card">
+                                <i data-lucide="quote" class="quote-icon"></i>
+                                <p class="quote-text" id="motivational-quote">"El movimiento es una medicina para crear el cambio físico, emocional y mental."</p>
+                            </div>
+                        </div>
+                        <div class="welcome-badge">
+                            <div class="badge-icon"><i data-lucide="trophy"></i></div>
+                            <span class="badge-label">Meta: Ascenso 2026</span>
+                        </div>
+                    </div>
+
+                    <!-- Progress Cards Grid -->
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">Progreso del Curso</span>
+                                <div class="stat-icon-wrapper primary"><i data-lucide="activity"></i></div>
+                            </div>
+                            <div class="stat-value"><span id="stats-progress-percent">0</span>%</div>
+                            <div class="stat-progress-bar">
+                                <div id="stats-progress-fill" class="progress-fill" style="width: 0%"></div>
+                            </div>
+                            <span class="stat-desc" id="stats-progress-desc">0 de 3 exámenes completados</span>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">Puntaje Total Promedio</span>
+                                <div class="stat-icon-wrapper success"><i data-lucide="check-square"></i></div>
+                            </div>
+                            <div class="stat-value"><span id="stats-avg-score">0.00</span> / 120.00</div>
+                            <div class="stat-progress-bar">
+                                <div id="stats-avg-fill" class="progress-fill success" style="width: 0%"></div>
+                            </div>
+                            <span class="stat-desc">Promedio acumulado de aciertos</span>
+                        </div>
+
+                        <div class="stat-card">
+                            <div class="stat-header">
+                                <span class="stat-label">Intentos Disponibles</span>
+                                <div class="stat-icon-wrapper warning"><i data-lucide="shield-alert"></i></div>
+                            </div>
+                            <div class="stat-value"><span id="stats-attempts-left">3</span> / 3</div>
+                            <span class="stat-desc warning-text"><i data-lucide="info" class="small-icon"></i> 1 intento máximo por examen</span>
+                        </div>
+                    </div>
+
+                    <!-- Exams List Section -->
+                    <div class="exams-section">
+                        <h3 class="section-title"><i data-lucide="book-open"></i> Exámenes Pasados Disponibles</h3>
+                        <p class="section-subtitle">Casuísticas oficiales recopiladas del MINEDU. Recuerda que solo tienes un intento por cada uno.</p>
+                        
+                        <div class="exams-grid" id="exams-list-container">
+                            <!-- Exam Cards Dynamically Populated -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. VIEW: EXAM PLAYER -->
+            <section id="view-exam-player" class="view hidden">
+                <div class="exam-player-container">
+                    
+                    <!-- Player Header -->
+                    <div class="player-header">
+                        <div class="player-header-actions" style="display: flex; gap: 8px;">
+                            <button id="btn-exit-exam" class="btn btn-outline btn-sm">
+                                <i data-lucide="arrow-left"></i> Salir (Pausa)
+                            </button>
+                            <button id="btn-finish-exam-early" class="btn btn-danger btn-sm">
+                                <i data-lucide="check-square"></i> Finalizar Examen
+                            </button>
+                        </div>
+                        <div class="exam-identity">
+                            <span id="player-exam-title" class="player-title">Examen de Ascenso 2025</span>
+                            <span class="player-subtitle">Especialidad: Educación Física</span>
+                        </div>
+                        <div class="player-badges-group">
+                            <div class="player-timer-badge">
+                                <i data-lucide="clock"></i>
+                                <span>Tiempo: <strong id="player-timer-value">03:00:00</strong></span>
+                            </div>
+                            <div class="player-score-badge">
+                                <i data-lucide="star"></i>
+                                <span>Puntos: <strong id="player-current-score">0.00</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Progress Tracker Bar -->
+                    <div class="player-progress-section">
+                        <div class="progress-info">
+                            <span id="player-question-counter">Pregunta 1 de 5</span>
+                            <span class="question-value-badge" id="player-question-value">Valor: 2.00 puntos</span>
+                        </div>
+                        <div class="progress-track">
+                            <div id="player-progress-bar-fill" class="progress-fill" style="width: 20%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Main Question Card -->
+                    <div class="question-card" id="question-card-container">
+                        
+                        <div class="question-case">
+                            <div class="case-header">
+                                <i data-lucide="clipboard-list"></i>
+                                <span>CASO PRÁCTICO / SITUACIÓN PEDAGÓGICA</span>
+                            </div>
+                            <p id="player-question-text" class="case-text">
+                                Cargando casuística...
+                            </p>
+                        </div>
+
+                        <!-- Options Form -->
+                        <div class="options-container" id="player-options-container">
+                            <!-- Options dynamically loaded -->
+                        </div>
+
+                        <!-- Feedback Panel (Hidden by default, slides down on answer) -->
+                        <div class="feedback-panel hidden" id="player-feedback-panel">
+                            <div class="feedback-header">
+                                <div class="feedback-status-icon" id="feedback-icon-container">
+                                    <i data-lucide="check" id="feedback-icon-correct" class="hidden"></i>
+                                    <i data-lucide="x" id="feedback-icon-incorrect" class="hidden"></i>
+                                </div>
+                                <div>
+                                    <span id="feedback-status-text" class="feedback-status">¡Respuesta Correcta!</span>
+                                    <span class="feedback-meta">Retroalimentación del Enfoque Pedagógico</span>
+                                </div>
+                            </div>
+                            <div class="feedback-body">
+                                <p id="player-feedback-text">
+                                    Explicación del criterio curricular del MINEDU...
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Player Footer Actions -->
+                        <div class="player-footer">
+                            <div class="footer-help">
+                                <i data-lucide="info"></i>
+                                <span>Marca una alternativa para evaluar y recibir retroalimentación.</span>
+                            </div>
+                            <button id="btn-submit-answer" class="btn btn-primary" disabled>
+                                <span>Evaluar Respuesta</span>
+                                <i data-lucide="check-circle-2"></i>
+                            </button>
+                            <button id="btn-next-question" class="btn btn-primary hidden">
+                                <span>Siguiente Pregunta</span>
+                                <i data-lucide="arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. VIEW: RESULTS -->
+            <section id="view-results" class="view hidden">
+                <div class="results-container">
+                    
+                    <!-- Result Header Card -->
+                    <div class="results-header-card">
+                        <div class="results-summary">
+                            <span class="results-pretitle">Resultados del Examen</span>
+                            <h2 id="results-exam-title" class="results-title">Examen de Ascenso Docente 2025</h2>
+                            <p class="results-subtitle">Educación Física</p>
+                            
+                            <div class="achievement-badge" id="results-achievement-badge">
+                                <i data-lucide="shield-check"></i>
+                                <span id="results-achievement-text">Nivel Logrado</span>
+                            </div>
+                        </div>
+
+                        <div class="score-circle-container">
+                            <div class="score-circle">
+                                <div class="score-number" id="results-score-value">8.00</div>
+                                <div class="score-label">Puntos Obtenidos</div>
+                                <div class="score-max">Máximo: 120.00 pts</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Performance Stats Grid -->
+                    <div class="results-stats-grid">
+                        <div class="r-stat-card">
+                            <span class="r-stat-label">Respuestas Correctas</span>
+                            <div class="r-stat-value success-text" id="results-correct-count">4</div>
+                        </div>
+                        <div class="r-stat-card">
+                            <span class="r-stat-label">Respuestas Incorrectas</span>
+                            <div class="r-stat-value error-text" id="results-incorrect-count">1</div>
+                        </div>
+                        <div class="r-stat-card">
+                            <span class="r-stat-label">Porcentaje de Logro</span>
+                            <div class="r-stat-value primary-text"><span id="results-accuracy-percent">80</span>%</div>
+                        </div>
+                    </div>
+
+                    <!-- Diagnostic Dashboard (Strengths & Weaknesses) -->
+                    <div class="diagnostic-section">
+                        <h3 class="diagnostic-title"><i data-lucide="bar-chart-3"></i> Diagnóstico de Competencias</h3>
+                        <p class="diagnostic-subtitle">Análisis detallado de tus fortalezas y oportunidades de mejora pedagógica en Educación Física.</p>
+                        
+                        <div class="diagnostic-container">
+                            <div class="diagnostic-column">
+                                <h4 class="diagnostic-col-title strengths-header"><i data-lucide="trending-up"></i> Tus Fortalezas</h4>
+                                <div id="diagnostic-strengths-list" class="diagnostic-list">
+                                    <!-- Strengths will be rendered here -->
+                                </div>
+                            </div>
+                            
+                            <div class="diagnostic-column">
+                                <h4 class="diagnostic-col-title weaknesses-header"><i data-lucide="trending-down"></i> Oportunidades de Mejora</h4>
+                                <div id="diagnostic-weaknesses-list" class="diagnostic-list">
+                                    <!-- Weaknesses will be rendered here -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Recommendation Card -->
+                        <div class="diagnostic-recommendation-card" id="diagnostic-recommendation-panel" style="margin-top: 24px;">
+                            <div class="recommendation-header">
+                                <i data-lucide="lightbulb" class="recommendation-icon"></i>
+                                <div>
+                                    <span class="recommendation-title">Recomendaciones Personalizadas para tu Examen</span>
+                                    <span class="recommendation-subtitle">Plan de estudio a medida según tus respuestas obtenidas en esta evaluación.</span>
+                                </div>
+                            </div>
+                            <div class="recommendation-body" id="diagnostic-recommendation-text">
+                                <!-- Recommendations will be rendered here -->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Question Review Section -->
+                    <div class="review-section">
+                        <h3 class="review-section-title"><i data-lucide="search-code"></i> Revisión de Preguntas e Intentos</h3>
+                        <p class="review-section-subtitle">Repasa las retroalimentaciones pedagógicas de tus respuestas.</p>
+                        
+                        <div class="review-questions-list" id="results-review-list">
+                            <!-- Dynamic review cards -->
+                        </div>
+                    </div>
+
+                    <div class="results-actions">
+                        <button id="btn-results-back" class="btn btn-primary">
+                            <i data-lucide="layout-dashboard"></i> Volver al Dashboard
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="app-footer">
+            <p>&copy; 2026 Plataforma de Capacitación Docente. Exclusivo para Educación Física. Desplegado con fines de preparación oficial.</p>
+        </footer>
+
+    </div>
+
+    <!-- CONFIG MODAL: SUPABASE CONFIGURATION -->
+    <div id="modal-config" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-card">
+            <div class="modal-header">
+                <h3><i data-lucide="database"></i> Configuración de Conexión Supabase</h3>
+                <button id="btn-close-config" class="btn-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">
+                    Conecta esta interfaz con tu base de datos de <strong>Supabase</strong> para guardar los intentos de forma permanente en la nube y usar autenticación remota.
+                </p>
+                <div class="alert-box info">
+                    <i data-lucide="info"></i>
+                    <span>Si no la configuras, la app funcionará en <strong>Modo Demo Local</strong> guardando datos en tu navegador.</span>
+                </div>
+                
+                <form id="config-supabase-form">
+                    <div class="form-group">
+                        <label for="config-url">Supabase Project URL</label>
+                        <input type="url" id="config-url" placeholder="https://xxxxxx.supabase.co" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="config-key">Supabase Anon Key</label>
+                        <input type="password" id="config-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..." required>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="button" id="btn-clear-config" class="btn btn-outline error-border">Limpiar Conexión</button>
+                        <button type="submit" class="btn btn-primary">Guardar y Conectar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXIT EXAM WARNING MODAL -->
+    <div id="modal-exit-warning" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-card warning-border">
+            <div class="modal-header warning-header">
+                <h3><i data-lucide="pause-circle"></i> Pausar Examen en Curso</h3>
+                <button id="btn-close-exit-warning" class="btn-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">
+                    Si sales del examen ahora, tu progreso (respuestas marcadas y tiempo restante) se guardará de forma segura. El reloj se quedará en pausa hasta que regreses para continuar con tu intento.
+                </p>
+                <p class="modal-highlight">¿Estás seguro de que deseas pausar el examen y salir al menú?</p>
+                
+                <div class="modal-actions">
+                    <button type="button" id="btn-exit-cancel" class="btn btn-outline">Continuar Examen</button>
+                    <button type="button" id="btn-exit-confirm" class="btn btn-warning">Sí, Pausar y Salir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- FINISH EXAM WARNING MODAL -->
+    <div id="modal-finish-warning" class="modal hidden">
+        <div class="modal-overlay"></div>
+        <div class="modal-card warning-border" style="border-top-color: var(--error);">
+            <div class="modal-header">
+                <h3 style="color: var(--error);"><i data-lucide="alert-triangle"></i> Finalizar y Enviar Examen</h3>
+                <button id="btn-close-finish-warning" class="btn-close"><i data-lucide="x"></i></button>
+            </div>
+            <div class="modal-body">
+                <p class="modal-desc">
+                    ¿Estás seguro de que deseas finalizar tu examen ahora? Se registrará tu puntaje obtenido hasta el momento (<strong id="modal-finish-current-score">0.00</strong> puntos) y no podrás volver a realizar este examen.
+                </p>
+                <p class="modal-highlight">Esta acción es irreversible y consumirá tu único intento disponible.</p>
+                
+                <div class="modal-actions">
+                    <button type="button" id="btn-finish-cancel" class="btn btn-outline">Continuar Examen</button>
+                    <button type="button" id="btn-finish-confirm" class="btn btn-danger">Sí, Finalizar y Enviar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cargar base de preguntas y lógica de la aplicación -->
+    <script src="preguntas.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
