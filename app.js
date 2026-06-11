@@ -90,8 +90,13 @@ const testUsers = generate150Users();
 // 3. CONTROL DE PERSISTENCIA (SUPABASE VS LOCALSTORAGE)
 // -------------------------------------------------------------
 const initSupabase = () => {
-    const savedUrl = localStorage.getItem('supabase_url');
-    const savedKey = localStorage.getItem('supabase_key');
+    // CONFIGURACIÓN POR DEFECTO (Para producción/compartir con otros docentes):
+    // Pega aquí tu Project URL y tu Anon Key si deseas que se conecte automáticamente para todos
+    const defaultUrl = 'https://cwbzfmzjwkwnnhtuxfra.supabase.co'; 
+    const defaultKey = 'sb_publishable_1boYvcBYJFrMr-nrEgekMw_zBc417tI'; 
+    
+    const savedUrl = localStorage.getItem('supabase_url') || defaultUrl;
+    const savedKey = localStorage.getItem('supabase_key') || defaultKey;
     
     if (savedUrl && savedKey) {
         try {
